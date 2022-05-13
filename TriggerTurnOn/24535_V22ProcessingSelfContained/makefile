@@ -3,6 +3,8 @@ Config     = config/20220412.config
 default: Prepare Execute
 
 Prepare:
+	mkdir -p samples
+	mkdir -p library
 	ln -sf /eos/cms/store/cmst3/group/l1tr/phase2Menu/EmuDev/DYToLL_M-50_TuneCP5_14TeV-pythia8/DY_PU200_v22/220407_094155/0000// samples/DYLLV22
 
 Execute: source/FillHistograms.cpp library/Histograms.o library/HelperFunctions.o library/L1Classes.so library/Messenger.o library/TauHelperFunctions3.o
@@ -13,7 +15,6 @@ Execute: source/FillHistograms.cpp library/Histograms.o library/HelperFunctions.
 		library/Histograms.o library/HelperFunctions.o
 
 library/L1Classes.so: include/L1Classes.h include/L1LinkDef.h
-	mkdir -p library
 	rootcint -f source/L1Classes.cpp -c include/L1Classes.h include/L1LinkDef.h
 	g++ `root-config --cflags` source/L1Classes.cpp -o library/L1Classes.o -I. -c -fpic
 	g++ -shared -o library/L1Classes.so library/L1Classes.o
