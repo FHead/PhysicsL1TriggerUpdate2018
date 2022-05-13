@@ -2,6 +2,10 @@ Config     = config/20220412.config
 
 default: Prepare Execute
 
+Clean:
+	rm -f library/*
+	rm -f source/L1Classes.cpp source/L1Classes_rdict.pcm
+
 Prepare:
 	mkdir -p samples
 	mkdir -p library
@@ -9,7 +13,7 @@ Prepare:
 
 Execute: source/FillHistograms.cpp library/Histograms.o library/HelperFunctions.o library/L1Classes.so library/Messenger.o library/TauHelperFunctions3.o
 	g++ `root-config --cflags --glibs` source/FillHistograms.cpp -Iinclude -o Execute \
-		`fastjet-config --cxxflags --libs` \
+		`fastjet-config --cxxflags --libs` -std=c++17 \
 		library/TauHelperFunctions3.o \
 		library/Messenger.o library/L1Classes.so \
 		library/Histograms.o library/HelperFunctions.o
@@ -21,17 +25,17 @@ library/L1Classes.so: include/L1Classes.h include/L1LinkDef.h
 	(cd library && ln -sf ../source/L1Classes_rdict.pcm .)
 
 library/TauHelperFunctions3.o: source/TauHelperFunctions3.cpp include/TauHelperFunctions3.h
-	g++ source/TauHelperFunctions3.cpp -Iinclude -c -o library/TauHelperFunctions3.o 
+	g++ source/TauHelperFunctions3.cpp -Iinclude -c -o library/TauHelperFunctions3.o -std=c++17
 
 library/Messenger.o: source/Messenger.cpp
-	g++ `root-config --cflags` source/Messenger.cpp -Iinclude -c -o library/Messenger.o
+	g++ `root-config --cflags` source/Messenger.cpp -Iinclude -c -o library/Messenger.o -std=c++17
 
 library/Histograms.o: source/Histograms.cpp include/Histograms.h
-	g++ `root-config --cflags` source/Histograms.cpp -Iinclude -c -o library/Histograms.o
+	g++ `root-config --cflags` source/Histograms.cpp -Iinclude -c -o library/Histograms.o -std=c++17
 
 library/HelperFunctions.o: source/HelperFunctions.cpp include/HelperFunctions.h
 	g++ `root-config --cflags` source/HelperFunctions.cpp -c -o library/HelperFunctions.o \
-		-Iinclude `fastjet-config --cxxflags`
+		-Iinclude `fastjet-config --cxxflags` -std=c++17
 
 RunTest: Execute
 	./Execute --input `ls samples/DYLLV22/* | head -n 5 | tr '\n' ',' | sed "s/,$$//g"` \
